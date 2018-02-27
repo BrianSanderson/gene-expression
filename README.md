@@ -6,4 +6,4 @@ Scripts that I wrote to assess the extent of differential gene expression in *Po
 
 1. [README.md](https://github.com/BrianSanderson/genomics-scripts/blob/master/gene-expression/README.md): this file
 
-2. [subsetBlastResults.R](https://github.com/BrianSanderson/genomics-scripts/blob/master/gene-expression/subsetBlastHits.R) An R script that I wrote to try to select the best homolog for *P. trichocarpa* sequences in *P. tremula* and *P. euphratica* based on BLAST results. It can be run from the command line using Rscript, with the first argument referencing BLAST output with the following fields: "qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore."
+2. [subsetBlastResults.R](https://github.com/BrianSanderson/genomics-scripts/blob/master/gene-expression/subsetBlastHits.R) An R script that I wrote to try to select the best homolog for *P. trichocarpa* sequences in *P. tremula* and *P. euphratica* based on BLAST results. See comments in the header to run from the command line using Rscript 

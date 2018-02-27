@@ -1,4 +1,15 @@
 #!/usr/local/bin/Rscript
+#
+# Author: Brian J. Sanderson <brian.sanderson@ttu.edu>
+#
+# Run from the command line:
+# Rscript <blastResults> <outputFile>
+#
+# Where <blastResults> is a text file of BLAST results containing the following
+# fields: "qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore"
+#
+# and <outputFile> is the target text file for output
+
 args <- commandArgs(TRUE)
 dater <- read.delim(args[1], stringsAsFactors=F)
 colnames(dater) <- c("qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore")
