@@ -23,7 +23,7 @@ runDGE <- function(counttable, group1, group2) {
   require("DESeq2")
   require("limma")
   require("edgeR")
-  #---------DeSeq
+  #---------DESeq2
   # Convenience variables
   countmat<-as.matrix(counttable)
   row.names(countmat)<-row.names(counttable)
@@ -44,11 +44,8 @@ runDGE <- function(counttable, group1, group2) {
   suppressMessages(cds <- DESeq(cds))
   suppressMessages(res <- results(cds))
   res<-as.matrix(res)
-  res<-data.frame(res)
-
-  #identifying genes with an FDR<0.01
-  resSig <- res[ res$padj < 0.01 & !is.na(res$padj), ]
-  res<-as.matrix(res)
+  
+  #Merge DESeq2 results with the count matrix
   AllData<-merge(res, countmat, by=0)
 
   #---------Limma
@@ -63,16 +60,14 @@ runDGE <- function(counttable, group1, group2) {
   wow<-lmFit(meow, design=cbind(Grp1=1,Grp2vs1=c(rep(0, times=group1),
 						 rep( 1, times=group2))))
 
-  #bayseian determination of liklihood of DE
+  #Bayseian determination of liklihood of DE
   wow<-eBayes(wow)
   yow<-topTable(wow,coef=2, number=nrow(counttable))
 
-  #finding genes with FDR<0.01 by limma
-  resSiglimma <- yow[ yow$adj.P.Val < 0.01 & !is.na(yow$adj.P.Val), ]
-  m<-nrow(resSiglimma)
+  #Merge limma results with the results from DESeq2
   AllData<-merge(yow, AllData, by.x=0, by.y=1, all=T)
 
-  #---------Edge R
+  #---------edgeR
 
   #Prepare data object, calculate norm factors
   y<-DGEList(counttable)
@@ -84,7 +79,7 @@ runDGE <- function(counttable, group1, group2) {
 
   y <- estimateGLMTrendedDisp(y, design)
 
-  #using most effective dispersion estimate, depend on trended
+  #Using most effective dispersion estimate, depend on trended
   #disp estimate preceeding it.
   y <- estimateGLMTagwiseDisp(y, design)
   fit<-glmFit(y, design)
@@ -98,19 +93,18 @@ runDGE <- function(counttable, group1, group2) {
   row.names(FDR)<-row.names(counttable)
   row.names(logFC_ER) <- row.names(counttable)
   FDR<-data.frame(FDR)
-  resSigEdger <- FDR[ FDR$FDR < 0.01 & !is.na(FDR$FDR), ]#FDR<0.01
-  resSigEdger<-data.frame(resSigEdger)
-  ES<- nrow(resSigEdger)
-
-  #merging files
+  
+  #Merge edgeR results with the results from DESeq2 and limma
   AllData<-merge(FDR, AllData, by.x=0, by.y=1, all=T)
   AllData<-merge(logFC_ER, AllData, by.x=0, by.y=1, all=T)
 
+  #Determine how many genes pass the significance threshold in all 3 analyses
   summed <- nrow(AllData[AllData$FDR<0.01 &
                            AllData$adj.P.Val<0.01 &
                            AllData$padj < 0.01 &
                            !is.na(AllData$padj),])
 
+  #Determine how many genes pass the significance threshold and a log2FC > 1 cut off
   summedThres <- nrow(AllData[AllData$FDR<0.01 &
                                 abs(AllData$logFC) > 1 &
                                 AllData$adj.P.Val<0.01 &
@@ -118,13 +112,14 @@ runDGE <- function(counttable, group1, group2) {
                                 AllData$padj < 0.01 &
                                 !is.na(AllData$padj) &
                                 abs(AllData$V1) > 1,])
+  
+  #Return just the gene names, logFC, and B-H FDR values
+  outData <- AllData[,c(1,2,3,4,8,11,15)]
+  outData[,1] <- as.character(outData[,1])
+  colnames(outData) <- c("gene", "edgeR_logFC", "edgeR_FDR", "limma_logFC", "limma_FDR", "DESeq2_logFC", "DESeq2_FDR")
 
   cat(paste("You have", summed, "genes differentially expressed across all analyses",    "\n"))
   cat(paste("You have", summedThres, "genes differentially expressed across all analyses, with a 2-fold change",    "\n"))
 
-  #Return the consensus set of differentially expressed genes
-  return(AllData[AllData$FDR<0.01 &
-                   AllData$adj.P.Val<0.01 &
-                   AllData$padj < 0.01 &
-                   !is.na(AllData$padj),])
+  return(outData)
 }
