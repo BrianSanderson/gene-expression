@@ -91,7 +91,7 @@ runDGE <- function(counttable, group1, group2, FDRthresh=0.01, fullResults=FALSE
   fit<-glmFit(y, design)
   lrt<-glmLRT(fit, coef=2)
 
-  #finding genes with FDR<0.01
+  #Calculate FDR and logFC for edgeR analysis
   FDR <- p.adjust(lrt$table$PValue, method="BH")
   FDR<-as.matrix(FDR)
   logFC_ER <- lrt$table$logFC
@@ -104,46 +104,41 @@ runDGE <- function(counttable, group1, group2, FDRthresh=0.01, fullResults=FALSE
   AllData<-merge(FDR, AllData, by.x=0, by.y=1, all=T)
   AllData<-merge(logFC_ER, AllData, by.x=0, by.y=1, all=T)
   
-  maPlot(x=NULL,y=NULL,logAbundance= xcpm, logFC = fc[,k], xlab = bquote(paste(log^2, CPM)), 
-         ylab = paste(strsplit(colnames(cmat)[k], '\\.')[[1]][1], ' - ', strsplit(colnames(cmat)[k], '\\.')[[1]][2], sep=""), 
-         de.tags= deix,pch = 19, cex = 0.3, smearWidth = 0.5, panel.first = grid(), 
-         smooth.scatter = FALSE, lowess = FALSE, 
-         main = paste('LogFC plot ', strsplit(colnames(cmat)[k], '\\.')[[1]][1], ' vs ', strsplit(colnames(cmat)[k], '\\.')[[1]][2], 
-                      sep=""))
+  #Give columns better names
+  colnames(AllData)[c(1,2,3,4,8,11,15)] <- c("gene", "edgeR_logFC", "edgeR_FDR", "limma_logFC", "limma_FDR", "DESeq2_logFC", "DESeq2_FDR")
+  AllData[,1] <- as.character(AllData[,1])
+  
+  
+  
+  #A convenience variable to plot genes that are significant across all analyses
   
   AllData$sig <- FALSE
-  AllData$sig[AllData$FDR<0.01 &
-                       AllData$adj.P.Val<0.01 &
-                       AllData$padj<0.01 &
-                       !is.na(AllData$padj)] <- TRUE
-  AllData$xcpm <- mglmOneGroup(counttableDE)
-  maPlot(x=NULL, y=NULL, logAbundance=AllData$xcpm, logFC=AllData$logFC, de.tags=which(AllData$sig),
+  AllData$sig[AllData$edgeR_FDR<FDRthresh &
+                       AllData$limma_FDR<FDRthresh &
+                       AllData$DESeq2_FDR<FDRthresh &
+                       !is.na(AllData$DESeq2_FDR)] <- TRUE
+  #Log CPM for plotting
+  AllData$logCPM <- mglmOneGroup(counttableDE)
+  
+  #Plot logFC vs logCPM
+  maPlot(x=NULL, y=NULL, logAbundance=AllData$logCPM, logFC=AllData$edgeR_logFC, de.tags=which(AllData$sig),
          smooth.scatter=FALSE, lowess=FALSE, pch=19, cex=0.5, smearWidth=0.5, panel.first=grid(),
          ylab=bquote(paste("edgeR ", log[2],"FC")), xlab=bquote(paste(log[2], CPM)))
 
   #Determine how many genes pass the significance threshold in all 3 analyses
-  summed <- nrow(AllData[AllData$FDR<FDRthresh &
-                           AllData$adj.P.Val<FDRthresh &
-                           AllData$padj < FDRthresh &
-                           !is.na(AllData$padj),])
+  summed <- length(which(AllData$sig))
 
   #Determine how many genes pass the significance threshold and a log2FC > 1 cut off
-  summedThres <- nrow(AllData[AllData$FDR<FDRthresh &
-                                abs(AllData$logFC) > 1 &
-                                AllData$adj.P.Val<FDRthresh &
-                                abs(AllData$log2FoldChange) > 1 &
-                                AllData$padj < FDRthresh &
-                                !is.na(AllData$padj) &
-                                abs(AllData$V1) > 1,])
+  summedThres <- nrow(AllData[AllData$sig == TRUE &
+                                abs(AllData$edgeR_logFC) > 1 &
+                                abs(AllData$limma_logFC) > 1 &
+                                abs(AllData$DESeq2_logFC) > 1,])
   
   cat(paste("You have", summed, "genes differentially expressed across all analyses",    "\n"))
   cat(paste("You have", summedThres, "genes differentially expressed across all analyses, with a 2-fold change",    "\n"))
   
   outData <- AllData[,c(1,2,3,4,8,11,15)]
-  outData[,1] <- as.character(outData[,1])
-  colnames(outData) <- c("gene", "edgeR_logFC", "edgeR_FDR", "limma_logFC", "limma_FDR", "DESeq2_logFC", "DESeq2_FDR")
-  
-  
+
   if(fullResults==TRUE) { #Return just the gene names, logFC, and B-H FDR values for all genes regardless of significance
     return(outData)
   } else { #Return the gene names, logFC, and B-H FDR values for genes that meet signifciance threshold across all analyses
