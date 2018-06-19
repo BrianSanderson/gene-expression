@@ -4,5 +4,5 @@ This directory is currently empty, but when the manuscript is accepted it will i
  
 ### Contents
 
-1. [README.md](https://github.com/BrianSanderson/gene-expression/blob/master/README.md): this file
+1. [README.md](https://github.com/BrianSanderson/gene-expression/blob/master/data/README.md): this file
 
