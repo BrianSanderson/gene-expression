@@ -1,29 +1,30 @@
-# Sex-specific Genes Function--------
+# Sex-specific Genes Function
 # Author: Brian J. Sanderson <brian.sanderson@ttu.edu>
 #
-#' Quantify genes that exhibit sex- or tissue-limited expression, estimated by a total count threshold or a CPM threshold. 
-#' 
-#' @param dgeObj A DGE object containing read counts for all libraries, with group names corresponding to male leaves "Ml", female leaves "Fl", male flowers "Mf", and female flowers "Ff"
-#'
-#' @param incLib The number of libraries that are required to pass the threshold for inclusion.
-#'
-#' @param excLib The number of libraries that are required to pass the threshold for exclusion.
-#' 
-#' @param thresh The threshold for including libraries, either in CPM or total reads.
-#' 
-#' @param type Determines whether the threshold is based on total reads (counts), or counts per million (CPM). CPM is the default.
-#' 
-#' @return A data frame of genes, with an indication of in which tissues the genes are expressed (Y/N).
-#'
-#' @examples 
-#' sexSpecificGenes <- getSpecificGenes(counttable, incLib=5, thresh=0.1, type="CPM")
+# Quantify genes that exhibit sex- or tissue-limited expression, estimated by a total count threshold or 
+# a CPM threshold. 
+# 
+# <dgeObj>: A DGElist object containing read counts for all libraries, with group names corresponding to 
+#           male leaves "Ml", female leaves "Fl", male flowers "Mf", and female flowers "Ff"
+#
+# <incLib>: The number of libraries that are required to pass the threshold for inclusion.
+#
+# <excLib>: The number of libraries that are required to pass the threshold for exclusion.
+# 
+# <thresh>: The threshold for including libraries, either in CPM or total reads.
+# 
+# <type>: Determines whether the threshold is based on total reads (counts), or counts per million (CPM). 
+#         CPM is the default.
+# 
+# Returns a data frame of genes, with an indication of in which tissues the genes are expressed (Y/N).
+#
+# Note: The letters A, B, C, & D correspond to different sex-tissue combinations. 
+# A: male flowers, B: male leaves, c: female flowers, d: female leaves. 
+# This was convenient for grouping (e.g. male flowers and male leaves is AB).
+
 
 getSpecificGenes <- function(dgeObj, incLib=5, excLib=5, thresh=0.1, type="CPM") {
 
-    # Note: The letters A, B, C, & D correspond to different sex-tissue combinations. 
-    # A: male flowers, B: male leaves, c: female flowers, d: female leaves. 
-    # This was convenient for grouping (e.g. male flowers and male leaves is AB).
-    
     if(type=="CPM") {
         A <- dgeObj[rowSums(cpm(dgeObj[,dgeObj$samples$group=="Ml"]) < thresh) >= excLib &
                     rowSums(cpm(dgeObj[,dgeObj$samples$group=="Fl"]) < thresh) >= excLib &

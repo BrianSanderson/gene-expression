@@ -1,14 +1,10 @@
-#!/usr/local/bin/Rscript
+# Identify the best homologs based on BLAST results optimizing for alignment quality and length
 #
 # Author: Brian J. Sanderson <brian.sanderson@ttu.edu>
 #
-# Run from the command line:
-# Rscript <blastResults> <outputFile>
+# <blastResults>: A text file of BLAST results containing the following fields: 
+#                 "qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore"
 #
-# Where <blastResults> is a text file of BLAST results containing the following
-# fields: "qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore"
-#
-# and <outputFile> is the target text file for output
 
 bestBlastHits <- function(fullResults) {
     colnames(fullResults) <- c("qseqid", "qlen", "sseqid", "length", "pident", "evalue", "bitscore")
