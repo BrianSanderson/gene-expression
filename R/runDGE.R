@@ -37,14 +37,14 @@ runDGE <- function(counttable, group1, group2, FDRthresh=0.01, fullResults=FALSE
   # Make the design matrix
   counttableDE<-as.matrix(counttable)
   colData <- data.frame(condition=c(rep("C", times=group1),
-				    rep( "D", times=group2)))
+                                    rep( "D", times=group2)))
 
   #Prepare data object, estimate normalization factors
   suppressMessages(cds <-DESeqDataSetFromMatrix(countData = counttableDE,
-						colData=colData,
-						design=formula(~condition)))
-  cds <- estimateSizeFactors( cds )
-  cds <- estimateDispersions( cds )
+                                                colData=colData,
+                                                design=formula(~condition)))
+  suppressMessages(cds <- estimateSizeFactors( cds ))
+  suppressMessages(cds <- estimateDispersions( cds ))
 
   #Run DeSeq, extract and format results
   suppressMessages(cds <- DESeq(cds))
@@ -64,7 +64,7 @@ runDGE <- function(counttable, group1, group2, FDRthresh=0.01, fullResults=FALSE
 
   #Running limma
   wow<-lmFit(meow, design=cbind(Grp1=1,Grp2vs1=c(rep(0, times=group1),
-						 rep( 1, times=group2))))
+                                                 rep( 1, times=group2))))
 
   #Bayseian determination of liklihood of DE
   wow<-eBayes(wow)
