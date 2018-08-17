@@ -149,8 +149,8 @@ runDGE <- function(counttable, group1, group2, FDRthresh=0.01, fullResults=FALSE
   } else { #Return the gene names, logFC, and B-H FDR values for genes that meet signifciance threshold across all analyses
     outData <- outData[outData$edgeR_FDR < FDRthresh &
                          outData$limma_FDR < FDRthresh &
-                         DESeq2$FDR < FDRthresh &
-                         !is.na(DESeq2$FDR),]
+                         outData$DESeq2_FDR < FDRthresh &
+                         !is.na(outData$DESeq2_FDR),]
     return(outData)
   }
   
