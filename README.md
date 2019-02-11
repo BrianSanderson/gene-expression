@@ -1,7 +1,11 @@
 ## Sex-biased gene expression in flowers, but not leaves, reveals secondary sexual dimorphism in *Populus balsamifera*
 
-This repository contains the data, scripts, and analysis files used for a forthcoming manuscript reporting the patterns of expression and molecular evolution of sex-biased genes in *Populus balsamifera*
- 
+This repository contains the data, scripts, and analysis files used for the
+analysis reported in my paper [Sex-biased gene expression in flowers, but not leaves,
+reveals secondary sexual dimorphism in *Populus balsamifera*](https://doi.org/10.1111/nph.15421),
+published in the journal [New Phytologist](https://nph.onlinelibrary.wiley.com/journal/14698137)
+in 2019.
+
 ### Contents
 
 1. [README.md](https://github.com/BrianSanderson/gene-expression/blob/master/README.md): this file
