@@ -1,6 +1,6 @@
 ## Analysis notebooks
 
-The notebooks in this directory describe the analysis that we report in [the manuscript](https://doi.org/10.1111/nph.15421). They are available both in Jupyter and R Markdown Notebook formats, as well as rendered as a github document for direct viewing on this site.
+The notebooks in this directory describe the analysis that we report in [the manuscript](https://doi.org/10.1111/nph.15421). They are available both in Jupyter and R Markdown Notebook formats, as well as rendered as a [github document for direct viewing on this site](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks/DGEanalysis.md).
 
 ### Contents
 
@@ -11,5 +11,3 @@ The notebooks in this directory describe the analysis that we report in [the man
 3. [DGEanalysis.Rmd](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks/DGEanalysis.Rmd): R Markdown analysis notebook
 
 4. [DGEanalysis.md](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks/DGEanalysis.md): Analysis notebook rendered to be viewed directly on github
-
-View the contents of the analysis notebooks by [following this link](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks/DGEanalysis.md)
