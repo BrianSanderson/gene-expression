@@ -14,4 +14,6 @@ in 2019.
 
 3. [data/](https://github.com/BrianSanderson/gene-expression/blob/master/data/): A directory containing read count data from *Populus balsamifera* leaf and flower RNA libraries.
 
-4. [DGEanalysis.ipynb](https://github.com/BrianSanderson/gene-expression/blob/master/DGEanalysis.ipynb): A Jupyter notebook that includes the R code used for the analysis of differential gene expression for this project.
+4. [notebooks/](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks): Notebooks that detail the analyses reported in the manuscript, in both Jupyter and R Markdown Notebook formats
+
+View the contents of the analysis notebooks by [following this link](https://github.com/BrianSanderson/gene-expression/blob/master/notebooks/DGEanalysis.md)
